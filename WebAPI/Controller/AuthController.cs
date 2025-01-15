@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -52,5 +53,19 @@ namespace WebAPI.Controller
                 return StatusCode(500,ex.Message);
             }
         }
+        [HttpPost("decode")]
+        public ActionResult DecodeToken([FromBody] string encodedToken)
+        {
+            try
+            {
+                string decryptedToken = TokenUtility.DecryptToken(encodedToken);
+                return Ok(new { decryptedToken });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Error in decoding the token", error = ex.Message });
+            }
+        }
+
     }
 }

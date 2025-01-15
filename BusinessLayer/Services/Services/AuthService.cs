@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using BusinessLayer.Utilities;
 using DataAccessLayer.Entities;
 using DataAccessLayer.GenericRepository.Interface;
 using DataAccessLayer.Repository.Interface;
@@ -26,51 +27,54 @@ namespace BusinessLayer.Services.Services
         }
         public async Task<ServiceResponse> SignIn(Employee employee)
         {
-            try {
+            try
+            {
                 var data = await _auth.GetUserByMail(employee.Email);
-                if (data== null)
+
+                if (data == null)
                 {
                     _logger.LogError("Incorrect Email");
-                    return new ServiceResponse(false,"Incorrect Email");
+                    return new ServiceResponse(false, "Incorrect Email");
                 }
-                
-                var result = _passwordHasher.VerifyHashedPassword(null, data.Password, employee.Password );
+
+                var result = _passwordHasher.VerifyHashedPassword(null, data.Password, employee.Password);
                 if (result != PasswordVerificationResult.Success)
                 {
                     _logger.LogWarning("Incorrect Password");
                     return new ServiceResponse(false, "Incorrect Password");
                 }
-                _logger.LogInformation("Logging process Done");
-                var token = GenerateJwtToken(data);
-                return new ServiceResponse(true, token);
-            }
-            catch(Exception ex) {
-                _logger.LogError($"{ex.Message}");
-                return new ServiceResponse(false,ex.Message);
-            }
-        }
-        private string GenerateJwtToken(Employee employee)
+                _logger.LogInformation("Login process completed successfully");
+
+                
+                var claims = new List<Claim>
         {
-            var claims = new[]
+            new Claim(ClaimTypes.NameIdentifier, data.Id.ToString()),
+            new Claim(ClaimTypes.Email, data.Email),
+            new Claim("FullName", data.Full_Name),
+            new Claim("Date", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))
+        };
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes("ThisistheSecuritykeyYourSuperSecretKey12345");
+                var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+
+                var token = new JwtSecurityToken(
+                    issuer: "YourIssuer",
+                    audience: "YourAudience",
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(1),
+                    signingCredentials: signingCredentials
+                );
+
+                var jwtToken = tokenHandler.WriteToken(token);
+
+                //var encryptedToken = TokenUtility.EncryptToken(jwtToken);
+                return new ServiceResponse(true, jwtToken);
+            }
+            catch (Exception ex)
             {
-        new Claim("Id", employee.Id.ToString()), 
-        new Claim("FullName", employee.Full_Name),
-        new Claim(JwtRegisteredClaimNames.Sub, employee.Email),
-        new Claim("Designation", employee.Designation),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-    };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSuperSecretKeyHere"));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: "YourIssuer", 
-                audience: "YourAudience", 
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(2),
-                signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                _logger.LogError($"Error during login: {ex.Message}");
+                return new ServiceResponse(false, ex.Message);
+            }
         }
 
         public async Task<ServiceResponse> SignUp(Employee employee)
