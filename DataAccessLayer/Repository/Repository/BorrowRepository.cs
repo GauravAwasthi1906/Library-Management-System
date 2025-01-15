@@ -1,6 +1,8 @@
 ﻿using DataAccessLayer.Data;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repository.Interface;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace DataAccessLayer.Repository.Repository
 {
@@ -12,14 +14,70 @@ namespace DataAccessLayer.Repository.Repository
             _context = context;
         }
 
-        public Task<List<Borrow>> GetAllBorrow()
+        public async Task<List<Borrow>> GetAllBorrow()
         {
-            throw new NotImplementedException();
+            var data = from i in _context.borrow
+                       join j in _context.member on i.MemberId equals j.Id
+                       join k in _context.book on i.BookId equals k.Id
+                       select new Borrow
+                       {
+                           Id = i.Id,
+                           MemberId = i.MemberId,
+                           BookId = i.BookId,
+                           BorrowDate = i.BorrowDate,
+                           DueDate = i.DueDate,
+                           ReturnDate = i.ReturnDate,
+                           member = new Member
+                           {
+                               Id = j.Id,
+                               Name = j.Name,
+                               ContactInfo = j.ContactInfo,
+                               MembershipDate = j.MembershipDate,
+                           },
+                           books = new Book
+                           {
+                               Id = k.Id,
+                               Title = k.Title,
+                               Author = k.Author,
+                               Genre = k.Genre,
+                               PublicationYear = k.PublicationYear
+                           }
+                       };
+            return await data.ToListAsync();
+
         }
 
-        public Task<Borrow> GetBorrow(int? id)
+        public async Task<Borrow> GetBorrow(int? id)
         {
-            throw new NotImplementedException();
+            var data = from i in _context.borrow
+                       join j in _context.member on i.MemberId equals j.Id
+                       join k in _context.book on i.BookId equals k.Id
+                       where i.Id == id
+                       select new Borrow
+                       {
+                           Id = i.Id,
+                           MemberId = i.MemberId,
+                           BookId = i.BookId,
+                           BorrowDate = i.BorrowDate,
+                           DueDate = i.DueDate,
+                           ReturnDate = i.ReturnDate,
+                           member = new Member
+                           {
+                               Id = j.Id,
+                               Name = j.Name,
+                               ContactInfo = j.ContactInfo,
+                               MembershipDate = j.MembershipDate,
+                           },
+                           books = new Book
+                           {
+                               Id = k.Id,
+                               Title = k.Title,
+                               Author = k.Author,
+                               Genre = k.Genre,
+                               PublicationYear = k.PublicationYear
+                           }
+                       };
+            return await data.FirstAsync();
         }
     }
 }

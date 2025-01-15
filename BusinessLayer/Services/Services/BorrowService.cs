@@ -30,9 +30,27 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public Task<ServiceResponse?> DeleteBorrow(int? id)
+        public async Task<ServiceResponse?> DeleteBorrow(int? id)
         {
-            throw new NotImplementedException();
+            try {
+                if (!id.HasValue || id<=0)
+                {
+                    _logger.LogWarning("Please Enter the valid Id");
+                    return new ServiceResponse(false,"Please Enter The valid Id");
+                }
+                var entity =await _genericRepository.GetDataById(id);
+                if (entity == null) {
+                    _logger.LogWarning("Data not found");
+                    return new ServiceResponse(false, $"Borrow not found with this ID {id}");
+                }
+                _genericRepository.DeleteData(entity);
+                _logger.LogInformation("Data Deleted Successfully");
+                return new ServiceResponse(true,"Data Deleted Successfully");
+
+            } catch (Exception ex) {
+                _logger.LogError("Something went Wrong");
+                return new ServiceResponse(false, ex.Message);
+            }
         }
 
         public Task<List<Borrow>> GetAllBorrows()
@@ -45,9 +63,29 @@ namespace BusinessLayer.Services.Services
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse> UpdateBorrow(int? id, Borrow borrow)
+        public async Task<ServiceResponse> UpdateBorrow(int? id, Borrow borrow)
         {
-            throw new NotImplementedException();
+            try {
+                if (!id.HasValue || id <= 0)
+                {
+                    _logger.LogWarning("Please Enter the valid Id");
+                    return new ServiceResponse(false, "Please Enter The valid Id");
+                }
+                var entity = await _genericRepository.GetDataById(id);
+                if (entity == null)
+                {
+                    _logger.LogWarning("Data not found");
+                    return new ServiceResponse(false, $"Borrow not found with this ID {id}");
+                }
+                entity.MemberId = borrow.MemberId;
+                entity.BookId = borrow.BookId;
+                await _genericRepository.UpdateDate(entity);
+                _logger.LogInformation($"{entity.MemberId}");
+                return new ServiceResponse(true, "Borrow Updated Successfully");
+            } catch (Exception ex) {
+                _logger.LogError("Something went wrong");
+                return new ServiceResponse(false,ex.Message);
+            }
         }
     }
 }
