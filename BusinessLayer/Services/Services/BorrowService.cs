@@ -3,6 +3,7 @@ using BusinessLayer.Services.Interface;
 using DataAccessLayer.Entities;
 using DataAccessLayer.GenericRepository.Interface;
 using DataAccessLayer.GenericRepository.Repository;
+using DataAccessLayer.Repository.Interface;
 
 namespace BusinessLayer.Services.Services
 {
@@ -10,10 +11,11 @@ namespace BusinessLayer.Services.Services
     {
         private readonly ILogger<Borrow> _logger;
         private readonly IGenericRepository<Borrow> _genericRepository;
-
-        public BorrowService(GenericRepository<Borrow> genericRepository)
+        private readonly IBorrowRepository _repository;
+        public BorrowService(GenericRepository<Borrow> genericRepository, IBorrowRepository repository)
         {
             _genericRepository = genericRepository;
+            _repository = repository;
         }
         public async Task<ServiceResponse> AddBorrow(Borrow borrow)
         {
@@ -53,14 +55,41 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public Task<List<Borrow>> GetAllBorrows()
+        public async Task<List<Borrow>> GetAllBorrows()
         {
-            throw new NotImplementedException();
+            try { 
+                var data = await _repository.GetAllBorrow();
+                if (!data.Any())
+                {
+                    _logger.LogInformation("Empty Details");
+                    throw new Exception("Data not found");
+                }
+                _logger.LogInformation("Borrow Data");
+                return data;
+            } catch (Exception ex) {
+                _logger.LogError($"{ex.Message}");
+                throw new Exception($"{ex.Message}");
+            }
         }
 
-        public Task<Borrow> GetBorrow(int? id)
+        public async Task<Borrow> GetBorrow(int? id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var data = await _repository.GetBorrow(id);
+                if (data== null)
+                {
+                    _logger.LogInformation("Empty Details");
+                    throw new Exception("Data not found");
+                }
+                _logger.LogInformation("Borrow Data");
+                return data;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                throw new Exception($"{ex.Message}");
+            }
         }
 
         public async Task<ServiceResponse> UpdateBorrow(int? id, Borrow borrow)
