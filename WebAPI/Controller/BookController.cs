@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +48,66 @@ namespace WebAPI.Controller
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> AddBood(BookDTO book)
+        {
+            try {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var entity = new Book
+                {
+                    Title=book.Title,
+                    Author=book.Author,
+                    Genre= book.Genre,
+                    PublicationYear = book.PublicationYear
+                };
+                var data = await _bookService.AddBookData(entity);
+                return Ok(data);
+            } catch (Exception ex) {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteBookDetail(int? id)
+        {
+            try {
+                if (!id.HasValue || id<=0)
+                {
+                    return BadRequest($"Please Enter the valid ID {id}");
+                }
+                var data = await _bookService.DeleteBookData(id);
+                return Ok(data);
+            } catch (Exception ex) {
+                return StatusCode(500,ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateBookDetails(int id, BookDTO book)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var entity = new Book
+                {
+                    Title = book.Title,
+                    Author = book.Author,
+                    Genre = book.Genre,
+                    PublicationYear = book.PublicationYear
+                };
+                var data = await _bookService.UpdateBookData(id,entity);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
        
     }
 }
