@@ -12,6 +12,7 @@ namespace BusinessLayer.Mapping
         public static void RegisterServices(IServiceCollection services)
         {
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IFeedBackService,FeedbackService>();
             services.AddScoped<IFeedBackRepository,FeedBackRepository>();

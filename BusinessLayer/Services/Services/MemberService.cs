@@ -1,7 +1,9 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 using DataAccessLayer.GenericRepository.Interface;
+using DataAccessLayer.Repository.Interface;
 
 namespace BusinessLayer.Services.Services
 {
@@ -9,10 +11,12 @@ namespace BusinessLayer.Services.Services
     {
         private readonly ILogger<MemberService> _logger;
         private readonly IGenericRepository<Member> _context;
-        public MemberService(ILogger<MemberService> logger, IGenericRepository<Member> context)
+        private readonly IMemberRepository _memberRepository;
+        public MemberService(ILogger<MemberService> logger, IGenericRepository<Member> context, IMemberRepository memberRepository)
         {
             _logger = logger;
             _context = context;
+            _memberRepository = memberRepository;
         }
         public async Task<ServiceResponse> AddMember(Member member)
         {
@@ -54,11 +58,11 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<List<Member>> GetAllMembers()
+        public async Task<List<MemberData>> GetAllMembers()
         {
             
             try { 
-                var data = await _context.GetAllData();
+                var data = await _memberRepository.GetAllMembers();
                 if (data == null || !data.Any())
                 {
                     throw new Exception("Data Not Found");
@@ -71,7 +75,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<Member> GetMemberById(int? id)
+        public async Task<MemberData> GetMemberById(int? id)
         {
             try {
                 if (!id.HasValue || id <= 0)
@@ -79,7 +83,7 @@ namespace BusinessLayer.Services.Services
                     _logger.LogWarning("Invalid ID provided.");
                     throw new ArgumentException("ID must be greater than 0.");
                 }
-                var data = await _context.GetDataById(id);
+                var data = await _memberRepository.GetMemberById(id?? 0);
                 if (data == null)
                 {
                     throw new Exception($"Member not found with this ID {id}");
