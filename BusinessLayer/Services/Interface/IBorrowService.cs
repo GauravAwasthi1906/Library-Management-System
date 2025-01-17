@@ -9,6 +9,6 @@ namespace BusinessLayer.Services.Interface
         Task<ServiceResponse> UpdateBorrow(int? id,Borrow borrow);
         Task<ServiceResponse?> DeleteBorrow(int? id);
         Task<List<Borrow>> GetAllBorrows();
-        Task<Borrow> GetBorrow(int? id);
+        Task<Borrow> GetBorrowById(int? id);
     }
 }

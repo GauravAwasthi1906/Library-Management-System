@@ -17,6 +17,9 @@ namespace BusinessLayer.Mapping
             services.AddScoped<IFeedBackRepository,FeedBackRepository>();
             services.AddScoped<IAuthRepository,AuthRepository>();
             services.AddScoped<IAuthService,AuthService>();
+            services.AddScoped<IBorrowRepository,BorrowRepository>();
+            services.AddScoped<IBorrowService,BorrowService>();
+            services.AddScoped<IBookService,BookService>();
             services.AddLogging();
         }
     }

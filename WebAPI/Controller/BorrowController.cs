@@ -13,7 +13,7 @@ namespace WebAPI.Controller
         private readonly IBorrowService _borrowService;
         public BorrowController(IBorrowService borrowService)
         {
-
+            _borrowService = borrowService;
         }
         [HttpPost]
         public async Task<ActionResult> AddBorow(BorrowDTO borrowDTO)
@@ -54,7 +54,7 @@ namespace WebAPI.Controller
         public async Task<ActionResult> GetBorrowById(int? id)
         {
             try {
-                var data= await _borrowService.GetBorrow(id);
+                var data= await _borrowService.GetBorrowById(id);
                 if (data == null)
                 {
                     return NotFound("User not found");

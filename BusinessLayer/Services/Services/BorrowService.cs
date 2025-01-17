@@ -9,11 +9,12 @@ namespace BusinessLayer.Services.Services
 {
     public class BorrowService : IBorrowService
     {
-        private readonly ILogger<Borrow> _logger;
+        private readonly ILogger<BorrowService> _logger;
         private readonly IGenericRepository<Borrow> _genericRepository;
         private readonly IBorrowRepository _repository;
-        public BorrowService(GenericRepository<Borrow> genericRepository, IBorrowRepository repository)
+        public BorrowService(GenericRepository<Borrow> genericRepository, IBorrowRepository repository,ILogger<BorrowService> logger)
         {
+            _logger = logger;
             _genericRepository = genericRepository;
             _repository = repository;
         }
@@ -45,7 +46,7 @@ namespace BusinessLayer.Services.Services
                     _logger.LogWarning("Data not found");
                     return new ServiceResponse(false, $"Borrow not found with this ID {id}");
                 }
-                _genericRepository.DeleteData(entity);
+                await _genericRepository.DeleteData(entity);
                 _logger.LogInformation("Data Deleted Successfully");
                 return new ServiceResponse(true,"Data Deleted Successfully");
 
@@ -72,7 +73,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<Borrow> GetBorrow(int? id)
+        public async Task<Borrow> GetBorrowById(int? id)
         {
             try
             {
