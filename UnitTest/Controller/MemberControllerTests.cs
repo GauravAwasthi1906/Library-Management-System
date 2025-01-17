@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebAPI.Controller;
 
+
 namespace UnitTest.Controller
 {
     public class MemberControllerTests
@@ -38,9 +39,19 @@ namespace UnitTest.Controller
             var data = await _controller.GetAllMembers();
 
             //assert
-            var okResult= Assert.IsType<OkObjectResult>(data);
-            var returnValue=Assert.IsType<OkObjectResult>(okResult);
-            Assert.NotNull(returnValue);
+            
+
+            if (data==null)
+            {
+                var notnull = Assert.IsType<NotFoundResult>(data);
+                Assert.NotNull(notnull);
+            }
+            else
+            {
+                var okResult = Assert.IsType<OkObjectResult>(data);
+                var returnValue = Assert.IsType<OkObjectResult>(okResult);
+                Assert.NotNull(returnValue);
+            }
         }
 
         [Fact]
@@ -62,9 +73,18 @@ namespace UnitTest.Controller
             var data = await _controller.GetMemberById( Id );
 
             //Assets
-            var OkResult = Assert.IsType<OkObjectResult>(data);
-            var ReturnValue= Assert.IsType<OkObjectResult>(OkResult);
-            Assert.NotNull(ReturnValue);
+
+            if (data == null)
+            {
+                var notnull = Assert.IsType<NotFoundResult>(data);
+                Assert.NotNull(notnull);
+            }
+            else
+            { 
+                var OkResult = Assert.IsType<OkObjectResult>(data);
+                var ReturnValue= Assert.IsType<OkObjectResult>(OkResult);
+                Assert.NotNull(ReturnValue);
+            }
         }
 
         [Fact]
@@ -78,9 +98,17 @@ namespace UnitTest.Controller
             var result = await _controller.AddNewMember(newMember);
 
             //Assets
-            var OkResult = Assert.IsType<OkObjectResult>(result);
-            var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
-            Assert.NotNull(ReturnValue);
+            if (result == null)
+            {
+                var notnull = Assert.IsType<NotFoundResult>(result);
+                Assert.NotNull(notnull);
+            }
+            else
+            {    
+                var OkResult = Assert.IsType<OkObjectResult>(result);
+                var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
+                Assert.NotNull(ReturnValue);
+            }
         }
 
         [Fact]
@@ -96,9 +124,17 @@ namespace UnitTest.Controller
             var result =await _controller.UpdateMember(Id, updateMember);
 
             //Assert
-            var Okresult = Assert.IsType<OkObjectResult>(result);
-            var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
-            Assert.NotNull(ReturnValue);
+            if (result == null)
+            {
+                var notnull = Assert.IsType<NotFoundResult>(result);
+                Assert.NotNull(notnull);
+            }
+            else
+            {
+                var Okresult = Assert.IsType<OkObjectResult>(result);
+                var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
+                Assert.NotNull(ReturnValue);
+            }
         }
 
         [Fact]
@@ -112,9 +148,17 @@ namespace UnitTest.Controller
             var result = await _controller.DeleteMember(Id);
 
             //Assert
-            var Okresult = Assert.IsType<OkObjectResult>(result);
-            var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
-            Assert.NotNull(ReturnValue);
+            if (result == null)
+            {
+                var notnull = Assert.IsType<NotFoundResult>(result);
+                Assert.NotNull(notnull);
+            }
+            else
+            {
+                var Okresult = Assert.IsType<OkObjectResult>(result);
+                var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
+                Assert.NotNull(ReturnValue);
+            }
         }
 
 
