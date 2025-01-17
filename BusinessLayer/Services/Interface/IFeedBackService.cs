@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 
 namespace BusinessLayer.Services.Interface
@@ -8,7 +9,7 @@ namespace BusinessLayer.Services.Interface
         Task<ServiceResponse> AddFeedBack(Feedback feedback);
         Task<ServiceResponse> UpdateFeedBack(int? id ,Feedback feedback);
         Task<ServiceResponse> DeleteFeedBack(int? id);
-        Task<List<Feedback>> GetAllFeedBacks();
-        Task<Feedback> GetFeedBack(int? id);
+        Task<List<FeedbackData>> GetAllFeedBacks();
+        Task<FeedbackData> GetFeedBack(int? id);
     }
 }

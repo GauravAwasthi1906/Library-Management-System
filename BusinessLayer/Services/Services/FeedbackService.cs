@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 using DataAccessLayer.GenericRepository.Interface;
 using DataAccessLayer.Repository.Interface;
@@ -52,7 +53,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<List<Feedback>> GetAllFeedBacks()
+        public async Task<List<FeedbackData>> GetAllFeedBacks()
         {
             try {
                 var data = await _repository.GetAllData();
@@ -66,7 +67,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<Feedback> GetFeedBack(int? id)
+        public async Task<FeedbackData> GetFeedBack(int? id)
         {
             try {
                 if (!id.HasValue || id<=0)

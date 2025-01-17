@@ -1,10 +1,11 @@
-﻿using DataAccessLayer.Entities;
+﻿using DataAccessLayer.DataDTOs;
+using DataAccessLayer.Entities;
 
 namespace DataAccessLayer.Repository.Interface
 {
     public interface IFeedBackRepository
     {
-        Task<List<Feedback>> GetAllData();
-        Task<Feedback> GetData(int? id);
+        Task<List<FeedbackData>> GetAllData();
+        Task<FeedbackData> GetData(int? id);
     }
 }

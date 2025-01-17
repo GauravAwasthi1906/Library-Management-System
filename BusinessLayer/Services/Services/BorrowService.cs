@@ -12,7 +12,7 @@ namespace BusinessLayer.Services.Services
         private readonly ILogger<BorrowService> _logger;
         private readonly IGenericRepository<Borrow> _genericRepository;
         private readonly IBorrowRepository _repository;
-        public BorrowService(GenericRepository<Borrow> genericRepository, IBorrowRepository repository,ILogger<BorrowService> logger)
+        public BorrowService(IGenericRepository<Borrow> genericRepository, IBorrowRepository repository,ILogger<BorrowService> logger)
         {
             _logger = logger;
             _genericRepository = genericRepository;
