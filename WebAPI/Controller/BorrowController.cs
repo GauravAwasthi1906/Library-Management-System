@@ -1,7 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
 using DataAccessLayer.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controller
@@ -64,7 +63,44 @@ namespace WebAPI.Controller
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteBorrow(int? id)
+        {
+            try {
+                if (!id.HasValue || id<=0)
+                {
+                    return BadRequest("Please Enter the Valid Id");
+                }
+                var data = await _borrowService.DeleteBorrow(id);
+                return Ok(data);
+            } catch (Exception ex) {
+                return StatusCode(500,ex.Message);
+            }
+        }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateBorrow([FromRoute] int? id, [FromBody] BorrowDTO borrowDTO)
+        {
+            try
+            {
+                if (!id.HasValue || id<=0)
+                {
+                    return BadRequest("Please Enter the valid number");
+                }
+                var entity = new Borrow
+                {
+                    MemberId = borrowDTO.MemberId,
+                    BookId = borrowDTO.BookId,
+                    BorrowDate = borrowDTO.BorrowDate,
+                    DueDate = borrowDTO.DueDate,
+                };
+                var data = await _borrowService.UpdateBorrow(id, entity);
+                return Ok(data);
+            }
+            catch (Exception ex) { 
+                return StatusCode(500, ex.Message); 
+            }
+        }
        
     }
 }

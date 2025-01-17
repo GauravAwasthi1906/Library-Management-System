@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.DTOs;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 
 namespace BusinessLayer.Services.Interface
@@ -8,7 +9,7 @@ namespace BusinessLayer.Services.Interface
         Task<ServiceResponse> AddBookData(Book book);
         Task<ServiceResponse> DeleteBookData(int? id);
         Task<ServiceResponse> UpdateBookData(int?id ,Book book);
-        Task<List<Book>> GetAllBookData();
-        Task<Book> GetBookById(int? id);
+        Task<List<BookData>> GetAllBookData();
+        Task<BookData> GetBookById(int? id);
     }
 }

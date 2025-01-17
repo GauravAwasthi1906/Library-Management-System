@@ -67,7 +67,7 @@ namespace DataAccessLayer.GenericRepository.Repository
         public async Task<T> UpdateDate(T entity)
         {
             
-            try {
+            try {   
                 _dbSet.Update(entity);
                 await _context.SaveChangesAsync();
                 return entity;

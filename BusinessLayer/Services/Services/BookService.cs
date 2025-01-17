@@ -1,7 +1,9 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 using DataAccessLayer.GenericRepository.Interface;
+using DataAccessLayer.Repository.Interface;
 
 namespace BusinessLayer.Services.Services
 {
@@ -9,10 +11,12 @@ namespace BusinessLayer.Services.Services
     {
         private readonly ILogger<BookService> _logger;
         private readonly IGenericRepository<Book> _repository;
-        public BookService(ILogger<BookService> logger, IGenericRepository<Book> repository)
+        private readonly IBookRepository _bookRepository;
+        public BookService(ILogger<BookService> logger, IGenericRepository<Book> repository, IBookRepository bookRepository)
         {
             _logger = logger;
             _repository = repository;
+            _bookRepository = bookRepository;
         }
 
         public async Task<ServiceResponse> AddBookData(Book book)
@@ -53,11 +57,11 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<List<Book>> GetAllBookData()
+        public async Task<List<BookData>> GetAllBookData()
         {
             try
             {
-                var data = await _repository.GetAllData();
+                var data = await _bookRepository.GetAllData();
                 if (!data.Any())
                 {
                     _logger.LogWarning("Data not found");
@@ -72,10 +76,10 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<Book> GetBookById(int? id)
+        public async Task<BookData> GetBookById(int? id)
         {
             try {
-                var data = await _repository.GetDataById(id);
+                var data = await _bookRepository.GetById(id?? 0);
                 if (data==null)
                 {
                     _logger.LogWarning($"Data not found with this Id {id}");

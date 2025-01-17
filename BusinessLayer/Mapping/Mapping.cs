@@ -20,6 +20,7 @@ namespace BusinessLayer.Mapping
             services.AddScoped<IAuthService,AuthService>();
             services.AddScoped<IBorrowRepository,BorrowRepository>();
             services.AddScoped<IBorrowService,BorrowService>();
+            services.AddScoped<IBookRepository,BookRepository>();
             services.AddScoped<IBookService,BookService>();
             services.AddLogging();
         }

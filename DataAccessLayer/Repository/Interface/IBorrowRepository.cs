@@ -1,10 +1,11 @@
-﻿using DataAccessLayer.Entities;
+﻿using DataAccessLayer.DataDTOs;
+using DataAccessLayer.Entities;
 
 namespace DataAccessLayer.Repository.Interface
 {
     public interface IBorrowRepository
     {
-        Task<List<Borrow>> GetAllBorrow();
-        Task<Borrow> GetBorrow(int? id);
+        Task<List<BorrowData>> GetAllBorrow();
+        Task<BorrowData> GetBorrow(int? id);
     }
 }

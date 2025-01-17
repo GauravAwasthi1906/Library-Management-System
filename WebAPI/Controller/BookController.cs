@@ -21,7 +21,7 @@ namespace WebAPI.Controller
             try
             {
                 var data = await _bookService.GetAllBookData();
-                if (data.Any())
+                if (!data.Any())
                 {
                     return NotFound("Data not found");
                 }

@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 using DataAccessLayer.GenericRepository.Interface;
 using DataAccessLayer.GenericRepository.Repository;
@@ -56,7 +57,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<List<Borrow>> GetAllBorrows()
+        public async Task<List<BorrowData>> GetAllBorrows()
         {
             try { 
                 var data = await _repository.GetAllBorrow();
@@ -73,7 +74,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<Borrow> GetBorrowById(int? id)
+        public async Task<BorrowData> GetBorrowById(int? id)
         {
             try
             {
