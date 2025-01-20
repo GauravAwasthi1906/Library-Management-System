@@ -29,16 +29,25 @@ namespace UnitTest.Controller
             var result = await authController.Login(loginData);
 
             // Assets
-            if (result == null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(result);
-                Assert.NotNull(notnull);
-            }
-            else { 
-                var OkResult = Assert.IsType<OkObjectResult>(result);
-                var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
-                Assert.NotNull(ReturnValue);
-            }
+            var OkResult = Assert.IsType<OkObjectResult>(result);
+            var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
+            Assert.NotNull(ReturnValue);
+        }
+
+        [Fact]
+        public async Task Authentication_ReturnIncorrectEmail_Password()
+        {
+            //arrange
+            var loginData = new LoginDTO { Email = "test@gmail.com", Password = "asldfjsal" };
+            _authServiceMock.Setup(x => x.SignIn(It.IsAny<Employee>())).ReturnsAsync(new ServiceResponse(false, "Invalid Email or Password"));
+
+            //act
+            var result = await authController.Login(loginData);
+
+            // Assert
+            var OkResult = Assert.IsType<UnauthorizedObjectResult>(result);
+            var ReturnResult = Assert.IsType<UnauthorizedObjectResult>(OkResult);
+            Assert.NotNull(ReturnResult);
         }
 
         [Fact]
@@ -52,17 +61,9 @@ namespace UnitTest.Controller
             var result = await authController.SignUp(newEmployee);
 
             //Assert
-            if (result== null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(result);
-                Assert.NotNull(notnull);
-            }
-            else
-            {
-                var OkResult = Assert.IsType<OkObjectResult>(result);
-                var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
-                Assert.NotNull(ReturnValue);
-            }
+            var OkResult = Assert.IsType<OkObjectResult>(result);
+            var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
+            Assert.NotNull(ReturnValue);
         }
 
 

@@ -30,7 +30,6 @@ namespace BusinessLayer.Services.Services
             try
             {
                 var data = await _auth.GetUserByMail(employee.Email);
-
                 if (data == null)
                 {
                     _logger.LogError("Incorrect Email");

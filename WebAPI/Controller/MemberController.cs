@@ -96,9 +96,13 @@ namespace WebAPI.Controller
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMember([FromRoute] int id)
+        public async Task<ActionResult> DeleteMember([FromRoute] int? id)
         {
             try {
+                if (!id.HasValue || id<=0)
+                {
+                    return BadRequest("Invalid Id ");
+                }
                 var data = await _context.DeleteMember(id); 
                 return Ok(data);
             } catch (Exception ex) { 

@@ -1,4 +1,4 @@
-﻿    using BusinessLayer.DTOs;
+﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
 using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
@@ -39,19 +39,10 @@ namespace UnitTest.Controller
             var data = await _controller.GetAllMembers();
 
             //assert
+            var okResult = Assert.IsType<OkObjectResult>(data);
+            var returnValue = Assert.IsType<OkObjectResult>(okResult);
+            Assert.NotNull(returnValue);
             
-
-            if (data==null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(data);
-                Assert.NotNull(notnull);
-            }
-            else
-            {
-                var okResult = Assert.IsType<OkObjectResult>(data);
-                var returnValue = Assert.IsType<OkObjectResult>(okResult);
-                Assert.NotNull(returnValue);
-            }
         }
 
         [Fact]
@@ -73,18 +64,10 @@ namespace UnitTest.Controller
             var data = await _controller.GetMemberById( Id );
 
             //Assets
-
-            if (data == null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(data);
-                Assert.NotNull(notnull);
-            }
-            else
-            { 
-                var OkResult = Assert.IsType<OkObjectResult>(data);
-                var ReturnValue= Assert.IsType<OkObjectResult>(OkResult);
-                Assert.NotNull(ReturnValue);
-            }
+            var OkResult = Assert.IsType<OkObjectResult>(data);
+            var ReturnValue= Assert.IsType<OkObjectResult>(OkResult);
+            Assert.NotNull(ReturnValue);
+            
         }
 
         [Fact]
@@ -97,18 +80,10 @@ namespace UnitTest.Controller
             //act 
             var result = await _controller.AddNewMember(newMember);
 
-            //Assets
-            if (result == null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(result);
-                Assert.NotNull(notnull);
-            }
-            else
-            {    
-                var OkResult = Assert.IsType<OkObjectResult>(result);
-                var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
-                Assert.NotNull(ReturnValue);
-            }
+            //Assets   
+            var OkResult = Assert.IsType<OkObjectResult>(result);
+            var ReturnValue = Assert.IsType<OkObjectResult>(OkResult);
+            Assert.NotNull(ReturnValue);
         }
 
         [Fact]
@@ -124,17 +99,9 @@ namespace UnitTest.Controller
             var result =await _controller.UpdateMember(Id, updateMember);
 
             //Assert
-            if (result == null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(result);
-                Assert.NotNull(notnull);
-            }
-            else
-            {
-                var Okresult = Assert.IsType<OkObjectResult>(result);
-                var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
-                Assert.NotNull(ReturnValue);
-            }
+            var Okresult = Assert.IsType<OkObjectResult>(result);
+            var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
+            Assert.NotNull(ReturnValue);
         }
 
         [Fact]
@@ -148,19 +115,26 @@ namespace UnitTest.Controller
             var result = await _controller.DeleteMember(Id);
 
             //Assert
-            if (result == null)
-            {
-                var notnull = Assert.IsType<NotFoundResult>(result);
-                Assert.NotNull(notnull);
-            }
-            else
-            {
-                var Okresult = Assert.IsType<OkObjectResult>(result);
-                var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
-                Assert.NotNull(ReturnValue);
-            }
+            var Okresult = Assert.IsType<OkObjectResult>(result);
+            var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
+            Assert.NotNull(ReturnValue);
         }
 
+        [Fact]
+        public async Task DeleteMember_ReturnBadResult_WhenMemerDeleted()
+        {
+            //arrange
+            var Id = 0;
+            _memberService.Setup(x => x.DeleteMember(Id)).ReturnsAsync(new ServiceResponse(false,"Please Enter the Valid Id"));
+
+            // act 
+            var result = await _controller.DeleteMember(Id);
+
+            //Assert
+            var OkResult = Assert.IsType<BadRequestObjectResult>(result);
+            var ReturnValue = Assert.IsType<BadRequestObjectResult>(OkResult);
+            Assert.NotNull(ReturnValue);
+        }
 
     }
 }

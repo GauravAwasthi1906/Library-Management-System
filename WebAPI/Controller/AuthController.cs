@@ -2,8 +2,6 @@
 using BusinessLayer.Services.Interface;
 using BusinessLayer.Utilities;
 using DataAccessLayer.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controller
@@ -32,6 +30,10 @@ namespace WebAPI.Controller
                     Password = login.Password,
                 };
                 var result = await _authService.SignIn(data);
+                if (!result.Flag)
+                {   
+                    return Unauthorized(result.Message);
+                }
                 return Ok(result);    
             }
             catch(Exception ex) {
