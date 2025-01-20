@@ -20,6 +20,7 @@ namespace UnitTest.Controller
         }
 
 
+        // get all dataset
         [Fact]
         public async Task GetAllMembers_ReturnsOkResult_WhenDataExists()
         {
@@ -46,6 +47,22 @@ namespace UnitTest.Controller
         }
 
         [Fact]
+        public async Task GetAllMember_ReturnResult_NODataExists()
+        {
+            //arrange
+            _memberService.Setup(x=>x.GetAllMembers()).ReturnsAsync(new List<MemberData>());
+
+            //act
+            var result = await _controller.GetAllMembers();
+
+            //assert
+            var okResult = Assert.IsType<NotFoundObjectResult>(result);
+            var returnValue=Assert.IsType<NotFoundObjectResult>(okResult);
+            Assert.NotNull(returnValue);
+        }
+
+        //get data by id
+        [Fact]
         public async Task GetMemberById_ReturnsOkResult_WhenMemberExists()
         {
             // arrang
@@ -71,10 +88,40 @@ namespace UnitTest.Controller
         }
 
         [Fact]
+        public async Task GetMemberById_ReturnNotFound_WhenMemberDoesentExist()
+        {
+            // arrange
+            var Id = 1;
+            _memberService.Setup(x => x.GetMemberById(Id)).ReturnsAsync((MemberData)null);
+
+            //act 
+            var result = await _controller.GetMemberById( Id );
+
+            //Assets
+            var OkResult = Assert.IsType<NotFoundObjectResult>(result);
+            var ReturnValue = Assert.IsType<NotFoundObjectResult>(OkResult);
+            Assert.NotNull(ReturnValue);
+        }
+        [Fact]
+        public async Task GetMemberById_Handle_Invalid_Id()
+        {
+            //arrange
+            var Id = 0;
+            //act
+            var result = await _controller.GetMemberById( Id );
+            //Assert
+            var okResult = Assert.IsType<BadRequestObjectResult>(result);
+            var ReturnResult = Assert.IsType<BadRequestObjectResult>(okResult);
+            Assert.NotNull(ReturnResult);
+        }
+
+
+        //add datamember
+        [Fact]
         public async Task AddNewMember_ReturnsOkResult_WhenMemberAdded()
         {
             //arrang
-            var newMember = new MemberDTO { Id = 1, Name = "Test", ContactInfo = "Test", MembershipDate = DateTime.Now };
+            var newMember = new MemberDTO {Name = "Test", ContactInfo = "Test", MembershipDate = DateTime.Now };
             _memberService.Setup(x => x.AddMember(It.IsAny<Member>())).ReturnsAsync(new ServiceResponse(true,"Member Added Successfully"));
 
             //act 
@@ -87,23 +134,55 @@ namespace UnitTest.Controller
         }
 
         [Fact]
+        public async Task AddNewMember_Return_BadRequest_WhenMemberAdded()
+        {
+            //arrange
+            var newMember = new MemberDTO {ContactInfo = "Test", MembershipDate = DateTime.Now };
+
+            //act
+            _controller.ModelState.AddModelError("Name","Name is required");
+            _controller.ModelState.AddModelError("ContactInfo", "ContactInfo is required");
+            _controller.ModelState.AddModelError("MembershipDate", "MembershipDate is required");
+            var result = await _controller.AddNewMember(newMember);
+            //Assert
+            var okResult = Assert.IsType<BadRequestObjectResult>(result);
+            var ReturnResult = Assert.IsType<BadRequestObjectResult>(okResult);
+            Assert.NotNull(ReturnResult);
+        }
+
+
+        // update member;
+        [Fact]
         public async Task UpdateMember_ReturnsOkResult_WhenMemberUpdated()
         {
             //arrang
             var Id = 1;
             var updateMember = new MemberDTO {Name = "Test", ContactInfo = "Test", MembershipDate = DateTime.Now };
-
             _memberService.Setup(x => x.UpdateMember(Id,It.IsAny<Member>())).ReturnsAsync(new ServiceResponse(true, "Member Updated Successfully"));
-
             // act
-            var result =await _controller.UpdateMember(Id, updateMember);
 
+            var result =await _controller.UpdateMember(Id, updateMember);
             //Assert
             var Okresult = Assert.IsType<OkObjectResult>(result);
             var ReturnValue = Assert.IsType<OkObjectResult>(Okresult);
             Assert.NotNull(ReturnValue);
         }
-
+        [Fact]
+        public async Task UpdateMember_ReturnBadRequest_WhenMemberUpdating()
+        {
+            //arrange
+            var Id = 1;
+            var updateMember = new MemberDTO { Name = "Test", ContactInfo = "Test", MembershipDate = DateTime.Now };
+            //act
+            _controller.ModelState.AddModelError("Name", "Name is required");
+            _controller.ModelState.AddModelError("ContactInfo", "ContactInfo is required");
+            _controller.ModelState.AddModelError("MembershipDate", "MembershipDate is required");
+            var result = await _controller.UpdateMember(Id,updateMember);
+            //Assert
+            var OkResult = Assert.IsType<BadRequestObjectResult>(result);
+            var ReturnResult = Assert.IsType<BadRequestObjectResult>(OkResult);
+            Assert.NotNull(ReturnResult);
+        }
         [Fact]
         public async Task DeleteMember_ReturnsOkResult_WhenMemberDeleted()
         {
@@ -121,15 +200,26 @@ namespace UnitTest.Controller
         }
 
         [Fact]
+        public async Task DeleteMember_ReturnNotFoundResult_WhenMemberNotFound()
+        {
+            //arrange
+            var Id = 1;
+            _memberService.Setup(x => x.DeleteMember(Id)).ReturnsAsync(new ServiceResponse(false,$"Member not found with this id {Id}"));
+            //act
+            var result = await _controller.DeleteMember(Id);
+            //assert
+            var okResult = Assert.IsType<NotFoundObjectResult>(result);
+            var ReturnResult= Assert.IsType<NotFoundObjectResult>(okResult);
+            Assert.NotNull(ReturnResult);
+        }
+
+        [Fact]
         public async Task DeleteMember_ReturnBadResult_WhenMemerDeleted()
         {
             //arrange
             var Id = 0;
-            _memberService.Setup(x => x.DeleteMember(Id)).ReturnsAsync(new ServiceResponse(false,"Please Enter the Valid Id"));
-
             // act 
             var result = await _controller.DeleteMember(Id);
-
             //Assert
             var OkResult = Assert.IsType<BadRequestObjectResult>(result);
             var ReturnValue = Assert.IsType<BadRequestObjectResult>(OkResult);

@@ -15,7 +15,7 @@ namespace BusinessLayer.Utilities
             using (var aes = Aes.Create())
             {
                 aes.Key = key; // Now the key is 32 bytes (256 bits)
-                aes.GenerateIV();
+                aes.GenerateIV();   
                 var iv = aes.IV;
 
                 using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))

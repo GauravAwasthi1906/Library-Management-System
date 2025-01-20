@@ -25,9 +25,10 @@ namespace DataAccessLayer.Repository.Repository
             return await data.ToListAsync();
         }
 
-        public async Task<MemberData> GetMemberById(int id)
+        public async Task<MemberData> GetMemberById(int? id)
         {
             var data = from i in _context.member
+                       where i.Id == id
                        select new MemberData
                        {
                            Id = i.Id,
@@ -35,7 +36,8 @@ namespace DataAccessLayer.Repository.Repository
                            ContactInfo = i.ContactInfo,
                            MembershipDate = i.MembershipDate,
                        };
-            return await data.FirstAsync();
+            var member=  await data.FirstOrDefaultAsync();
+            return member;
         }
     }
 }

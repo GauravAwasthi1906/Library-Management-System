@@ -31,11 +31,16 @@ namespace WebAPI.Controller
                 return StatusCode(500, ex.Message);
             }
         }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetBookById([FromRoute]int id)
+        public async Task<ActionResult> GetBookById([FromRoute]int? id)
         {
             try
             {
+                if (!id.HasValue || id<=0)
+                {
+                    return BadRequest($"You are passing a Invalid Id {id}");
+                }
                 var data = await _bookService.GetBookById(id);
                 if (data== null)
                 {
@@ -78,6 +83,10 @@ namespace WebAPI.Controller
                     return BadRequest($"Please Enter the valid ID {id}");
                 }
                 var data = await _bookService.DeleteBookData(id);
+                if (!data.Flag)
+                {
+                    return NotFound($"data not found with this Id {id}");
+                }
                 return Ok(data);
             } catch (Exception ex) {
                 return StatusCode(500,ex.Message);

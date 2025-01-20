@@ -22,6 +22,7 @@ namespace BusinessLayer.Services.Services
         {
             try { 
                 var data = await _context.AddNewData(member);
+
                 _logger.LogInformation($" {data.Name} has beed Successfully Added");
                 return new ServiceResponse(true, "Member has beed Added Successfully");
                
@@ -84,13 +85,9 @@ namespace BusinessLayer.Services.Services
                     throw new ArgumentException("ID must be greater than 0.");
                 }
                 var data = await _memberRepository.GetMemberById(id?? 0);
-                if (data == null)
-                {
-                    throw new Exception($"Member not found with this ID {id}");
-                }
                 return data;
             } catch (Exception ex) {
-                throw new Exception("An Error Occured while fetching Data");
+                throw new Exception(ex.Message);
             }
         }
 

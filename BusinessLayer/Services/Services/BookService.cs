@@ -65,7 +65,6 @@ namespace BusinessLayer.Services.Services
                 if (!data.Any())
                 {
                     _logger.LogWarning("Data not found");
-                    throw new Exception("Data not found");
                 }
                 _logger.LogInformation("Got the data");
                 return data;

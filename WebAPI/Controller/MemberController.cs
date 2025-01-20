@@ -27,17 +27,29 @@ namespace WebAPI.Controller
             try
             {
                 var data = await _context.GetAllMembers();
+                if (!data.Any())
+                {
+                   return NotFound("Member data is empty");
+                }
                 return Ok(data);
             } catch (Exception ex) {
                 return StatusCode(500, ex.Message);
             }
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetMemberById([FromRoute]int id)
+        public async Task<ActionResult> GetMemberById([FromRoute]int? id)
         {
             try
             {
-                var data = await _context.GetMemberById(id);
+                if (!id.HasValue || id<=0)
+                {
+                    return BadRequest("Please Enter the valid Id");
+                }
+                var data = await _context.GetMemberById(id?? 0);
+                if (data== null)
+                {
+                    return NotFound($"Data not found with Id->{id}");
+                }
                 return Ok(data);
             }
             catch (Exception ex)
@@ -103,7 +115,11 @@ namespace WebAPI.Controller
                 {
                     return BadRequest("Invalid Id ");
                 }
-                var data = await _context.DeleteMember(id); 
+                var data = await _context.DeleteMember(id);
+                if (!data.Flag)
+                {
+                    return NotFound($"Member not found with Id->{id}");
+                }
                 return Ok(data);
             } catch (Exception ex) { 
                 return StatusCode(500, ex.Message);

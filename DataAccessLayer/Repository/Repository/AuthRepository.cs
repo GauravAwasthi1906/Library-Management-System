@@ -20,7 +20,8 @@ namespace DataAccessLayer.Repository.Repository
                 var data = from i in _context.employee 
                            where i.Email == email 
                            select i;
-                return await data.FirstAsync();
+                var employee = await data.FirstOrDefaultAsync();
+                return employee;
             }catch (Exception ex) {
                 throw new Exception(ex.Message,ex);
             }
