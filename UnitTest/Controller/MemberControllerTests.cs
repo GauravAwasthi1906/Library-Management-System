@@ -1,4 +1,4 @@
-﻿using BusinessLayer.DTOs;
+﻿    using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
 using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
@@ -25,7 +25,7 @@ namespace UnitTest.Controller
         {
             // arrange
             _memberService.Setup(x => x.GetAllMembers()).ReturnsAsync(new List<MemberData>
-            {
+            {   
                 new MemberData
                 {
                     Id = 1,

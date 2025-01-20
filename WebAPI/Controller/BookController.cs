@@ -49,7 +49,7 @@ namespace WebAPI.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddBood(BookDTO book)
+        public async Task<ActionResult> AddBook(BookDTO book)
         {
             try {
                 if (!ModelState.IsValid)

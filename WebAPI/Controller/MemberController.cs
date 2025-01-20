@@ -2,6 +2,7 @@
 using BusinessLayer.Services.Interface;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace WebAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MemberController : ControllerBase
     {
         private readonly IMemberService _context;
