@@ -5,7 +5,6 @@ using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebAPI.Controller;
-using Xunit.Sdk;
 
 
 namespace UnitTest.Controller
