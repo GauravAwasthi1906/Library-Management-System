@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.CustomException;
 using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
+using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -23,9 +24,9 @@ namespace UnitTest.Controller
         public async Task GetAllAuthor_OkReturnOk_WhenDataAvailable()
         {
             //arrange
-            _authorServiceMock.Setup(x => x.GetAllAuthorData()).ReturnsAsync(new List<Author> 
+            _authorServiceMock.Setup(x => x.GetAllAuthorData()).ReturnsAsync(new List<AuthorData> 
                 { 
-                    new Author
+                    new AuthorData
                     {
                         Id = 1,
                         Name = "Test",
@@ -45,7 +46,7 @@ namespace UnitTest.Controller
         public async Task GetAllAuthor_OkReturnOk_WhenDataNotAvailable()
         {
             //arrange
-            _authorServiceMock.Setup(x => x.GetAllAuthorData()).ReturnsAsync(new List<Author> { });
+            _authorServiceMock.Setup(x => x.GetAllAuthorData()).ReturnsAsync(new List<AuthorData> { });
 
             //act
             var result = await authorController.GetAllAuthorData();
@@ -61,7 +62,7 @@ namespace UnitTest.Controller
         {
             //arrange
             int id = 1;
-            _authorServiceMock.Setup(x => x.GetAuthorById(id)).ReturnsAsync(new Author
+            _authorServiceMock.Setup(x => x.GetAuthorById(id)).ReturnsAsync(new AuthorData
             {
                 Id = id,
                 Name = "Test",
@@ -98,7 +99,7 @@ namespace UnitTest.Controller
             {
             //arrange
             int id = 1;
-            _authorServiceMock.Setup(x => x.GetAuthorById(id)).ReturnsAsync((Author)null);
+            _authorServiceMock.Setup(x => x.GetAuthorById(id)).ReturnsAsync((AuthorData)null);
 
             //act
             var result = await authorController.GetAuthorDataById(id);
@@ -133,15 +134,18 @@ namespace UnitTest.Controller
         public async Task AddAuthorDetail_WhenSomethingError()
         {
             //arrange
-            var data = new AuthorDTO {
-                Biography="Test",
+            var data = new AuthorDTO
+            {
+                Biography = "Test",
             };
-            _authorServiceMock.Setup(x => x.AddAuthorData(It.IsAny<Author>())).ReturnsAsync();
+            _authorServiceMock.Setup(x => x.AddAuthorData(It.IsAny<Author>())).ReturnsAsync(new ServiceResponse(false,"Data can not add"));
             //act
             var result = await authorController.AddAuthorDetail(data);
 
             //assert
-
+            var okResult = Assert.IsType<BadRequestObjectResult>(result);
+            var returnResult = Assert.IsType<BadRequestObjectResult>(okResult);
+            Assert.NotNull(returnResult);
         }
     }
 }
