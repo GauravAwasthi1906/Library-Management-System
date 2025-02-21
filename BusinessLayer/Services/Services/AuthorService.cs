@@ -10,13 +10,11 @@ namespace BusinessLayer.Services.Services
 {
     public class AuthorService : IAuthorService
     {
-        private readonly IGenericRepository<Author> _generic;
         private readonly ILogger<AuthorService> _logger;
         private readonly IAuthorRepository _authorRepository;
 
-        public AuthorService(IGenericRepository<Author> generic, ILogger<AuthorService> logger, IAuthorRepository authorRepository)
+        public AuthorService(ILogger<AuthorService> logger, IAuthorRepository authorRepository)
         {
-            _generic = generic;
             _logger = logger;
             _authorRepository = authorRepository;
         }
@@ -25,8 +23,6 @@ namespace BusinessLayer.Services.Services
             try {
 
                 _logger.LogInformation(author.Name,author.Biography);
-
-                //var data = await _generic.AddNewData(author);
                 var data = await _authorRepository.AddnewData(author);
                 if (data == 0)
                 {
@@ -45,18 +41,18 @@ namespace BusinessLayer.Services.Services
         {
             try {
                 if (!id.HasValue || id<=0)
-                {
+                {   
                     _logger.LogWarning($"Please Enter the Valid Id {id}");
                     return new ServiceResponse(false, $"Please provide the Valid Id {id}");
                 }
-                var data= await _generic.GetDataById(id);
+                var data = await _authorRepository.GetById(id);
                 if (data== null)
                 {
                     _logger.LogDebug($"Data is empty {data}");
                     return new ServiceResponse(false, $"The Data of Author is not available with Id {id}");
                 }
+                await _authorRepository.DeleteData(id);
                 _logger.LogInformation($"Data deleted Successfully {data}");
-                await _generic.DeleteData(data);
                 return new ServiceResponse (true,$"The Data of Author is Deleted with Id {id}");
             }
             catch (Exception ex)
@@ -68,7 +64,6 @@ namespace BusinessLayer.Services.Services
         public async Task<List<AuthorData>> GetAllAuthorData()
         {
             try { 
-                //var data = await _generic.GetAllData();
                 var data = await _authorRepository.GetAllData();
                 if (!data.Any())
                 {
@@ -90,7 +85,6 @@ namespace BusinessLayer.Services.Services
                 {
                     throw new DataCustomException($"Please Pass the Valid Id {id}");
                 }
-                //var data = await _generic.GetDataById(id);
                 var data = await _authorRepository.GetById(id);
                 return data;
             } catch (Exception ex) {
@@ -101,16 +95,13 @@ namespace BusinessLayer.Services.Services
         public async Task<ServiceResponse> UpdateAuthorData(int? id, Author author)
         {
             try {
-                var data = await _generic.GetDataById(id);
+                var data = await _authorRepository.GetById(id);
                 if (data == null)
                 {
                     _logger.LogInformation($"data not found with this Id {id}");
                     return new ServiceResponse(false,"Data not found");                    
                 }
-                data.Name = author.Name;
-                data.Biography = author.Biography;
-                var entity = await _generic.UpdateDate(data);
-                _logger.LogInformation($"Updated author data: {entity}");
+                await _authorRepository.UpdateData(id?? 0,author.Name,author.Biography);
                 return new ServiceResponse(true, "Author data updated Successfully");
             }
             catch (Exception ex)

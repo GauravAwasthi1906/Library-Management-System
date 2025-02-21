@@ -30,6 +30,15 @@ namespace DataAccessLayer.Repository.Repository
             }
         }
 
+        public async Task<int> DeleteData(int? id)
+        {
+            try {
+                return await _context.Database.ExecuteSqlRawAsync
+                    ($"EXEC DeleteAuthorData @p0", id);
+            } catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
+        }
 
         public async Task<List<AuthorData>> GetAllData()
         {
@@ -59,9 +68,9 @@ namespace DataAccessLayer.Repository.Repository
             try
             {
                 var authorEntities = _context.author
-         .FromSqlRaw("EXEC GETAUTHORDATABYID {0}", id)
-         .AsEnumerable() 
-         .FirstOrDefault();
+                .FromSqlRaw("EXEC GETAUTHORDATABYID {0}", id)
+                .AsEnumerable() 
+                .FirstOrDefault();
                 return authorEntities == null ? null : new AuthorData
                 {
                     Id = authorEntities.Id,
@@ -70,6 +79,20 @@ namespace DataAccessLayer.Repository.Repository
                 };
             }
             catch (Exception ex) { 
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> UpdateData(int id, string name, string biography)
+        {
+            try
+            {
+                return await _context.Database.ExecuteSqlRawAsync(
+                   "EXEC UpdateAuthorData @p0, @p1 , @p2",id
+                   ,name, biography);
+            }
+            catch( Exception ex) 
+            {
                 throw new Exception(ex.Message);
             }
         }
