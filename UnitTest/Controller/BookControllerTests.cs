@@ -1,8 +1,11 @@
-﻿using BusinessLayer.DTOs;
+﻿using System.Diagnostics;
+using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
 using DataAccessLayer.DataDTOs;
 using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Logging;
 using Moq;
 using WebAPI.Controller;
 
@@ -13,13 +16,13 @@ namespace UnitTest.Controller
     {
         private readonly Mock<IBookService> _bookServiceMock;
         private readonly BookController _controller;
-
+        //private readonly ILogger<BookControllerTests> _logger;
         public BookControllerTests()
         {
             _bookServiceMock = new Mock<IBookService>();
             _controller = new BookController(_bookServiceMock.Object);
+            
         }
-
 
         [Fact]
         public async Task GetAllBook_OkReturnOk_WhenDataAvailable()
@@ -44,6 +47,7 @@ namespace UnitTest.Controller
             var OkResult = Assert.IsType<OkObjectResult>(result);
             var ReturnResult= Assert.IsType<OkObjectResult>(OkResult);
             Assert.NotNull(ReturnResult);
+            Debug.WriteLine(ReturnResult.Value);
         }
         // when data is empty
         [Fact]
@@ -53,7 +57,7 @@ namespace UnitTest.Controller
             _bookServiceMock.Setup(x => x.GetAllBookData()).ReturnsAsync(new List<BookData>{});
 
             //act
-            var result = await _controller.GetAllBooks();
+            var result = await _controller.GetAllBooks();   
 
             //Assert
             var OkResult =Assert.IsType<NotFoundObjectResult>(result);
@@ -89,7 +93,7 @@ namespace UnitTest.Controller
         public async Task GetBookById_Return_NotFound_WhenDataNotExits()
         {
             //arrange
-            var Id = 1;
+            int Id = 1;
             _bookServiceMock.Setup(x => x.GetBookById(Id)).ReturnsAsync((BookData)null);
 
             //act
@@ -128,6 +132,27 @@ namespace UnitTest.Controller
             var OkResult = Assert.IsType<OkObjectResult>(result);
             var ReturnResult = Assert.IsType<OkObjectResult>(OkResult);
             Assert.NotNull(ReturnResult);
+        }
+        //model validation while adding the bookdata
+        [Fact]
+        public async Task AddBookData_BadRequest_WhenBookAdd()
+        {
+            //arrange
+            var newBook = new BookDTO {Author = "Test", Genre = "Test", PublicationYear = 2000 };
+            //_bookServiceMock.Setup(x => x.AddBookData(It.IsAny<Book>())).ReturnsAsync(new ServiceResponse(false,"All fields are required"));
+
+
+            //act
+            _controller.ModelState.AddModelError("Title", "Title is Required");
+            _controller.ModelState.AddModelError("Author", "Author is Required");
+            _controller.ModelState.AddModelError("Genre", "Genre is Required");
+            _controller.ModelState.AddModelError("PublicationYear", "PublicationYear is Required");
+            var result = await _controller.AddBook(newBook);
+            //Assert
+            var OkResult = Assert.IsType<BadRequestObjectResult>(result);
+            var ReturnResult =Assert.IsType<BadRequestObjectResult>(OkResult);
+            Assert.NotNull(ReturnResult);
+            Debug.WriteLine(ReturnResult.Value);
         }
 
         // update data

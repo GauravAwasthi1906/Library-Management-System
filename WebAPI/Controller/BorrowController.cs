@@ -1,12 +1,14 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Services.Interface;
 using DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BorrowController : ControllerBase
     {
         private readonly IBorrowService _borrowService;

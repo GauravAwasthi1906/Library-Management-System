@@ -23,6 +23,10 @@ namespace BusinessLayer.Services.Services
         {
             try
             {
+                if (book == null || string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author) || book.PublicationYear == null || book.PublicationYear <= 0)
+                {
+                    return new ServiceResponse(false, "All fields are required and must be valid.");
+                }
                 var data=await _repository.AddNewData(book);
                 if (data==null)
                 {

@@ -39,13 +39,13 @@ namespace BusinessLayer.Services.Services
                     return new ServiceResponse(false, "Please Enter the Valid Id");
                 }
                 var data = await _context.GetDataById(id);
-                if (data !=null)
+                if (data ==null)
                 {
-                    await _context.DeleteData(data);
-                    return new ServiceResponse(true,"Feedback is deleted Sucessfully");
+                    _logger.LogInformation($"Feedback is not found with this {id}");
+                    return new ServiceResponse(false, $"Feedback is not found with this {id}");
                 }
-                _logger.LogInformation($"Feedback is not found with this {id}");
-                return new ServiceResponse(false, $"Feedback is not found with this {id}");
+                await _context.DeleteData(data);
+                return new ServiceResponse(true,"Feedback is deleted Sucessfully");
 
             } catch (Exception ex) {
                 _logger.LogError("An Error Occured while Deleteing Feedback");
@@ -76,10 +76,6 @@ namespace BusinessLayer.Services.Services
                     throw new Exception("Please Enter the Valid Id");
                 }
                 var data = await _repository.GetData(id);
-                if (data == null)
-                {
-                    throw new Exception($"Data not found with this Id {id}");
-                }
                 return data;
             } catch (Exception ex) {
                 throw new Exception(ex.Message);

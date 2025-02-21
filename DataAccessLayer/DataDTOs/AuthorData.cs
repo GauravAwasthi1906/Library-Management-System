@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DataAccessLayer.Entities
+namespace DataAccessLayer.DataDTOs
 {
-    [Table("Author")]
-    public class Author
+    public class AuthorData
     {
-        [Key]
         public int Id { get; set; }
-        [Required]
         public string Name { get; set; }
-        [Required]
+        
         public string Biography { get; set; }
     }
 }

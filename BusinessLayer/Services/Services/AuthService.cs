@@ -79,6 +79,10 @@ namespace BusinessLayer.Services.Services
         public async Task<ServiceResponse> SignUp(Employee employee)
         {
             try {
+                var matching = await _auth.GetUserByMail(employee.Email);
+                if (matching != null) {
+                    return new ServiceResponse(false, "Employee Already Exists");
+                }
                 var password = _passwordHasher.HashPassword(null, employee.Password);
                 var emp = new Employee
                 { 

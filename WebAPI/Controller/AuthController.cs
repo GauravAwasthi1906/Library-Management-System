@@ -50,6 +50,10 @@ namespace WebAPI.Controller
                     return BadRequest(ModelState);
                 }
                 var data = await _authService.SignUp(employee);
+                if (!data.Flag)
+                {
+                    return StatusCode(409, new { message = data.Message });
+                }
                 return Ok(data);
             } catch (Exception ex) {
                 return StatusCode(500,ex.Message);

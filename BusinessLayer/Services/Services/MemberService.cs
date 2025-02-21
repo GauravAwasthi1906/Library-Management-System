@@ -20,12 +20,16 @@ namespace BusinessLayer.Services.Services
         }
         public async Task<ServiceResponse> AddMember(Member member)
         {
-            try { 
+            try {
+                if (member == null || string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.ContactInfo) || member.MembershipDate == DateTime.MinValue || member.MembershipDate == null)
+                {
+                    return new ServiceResponse(false, "All fields are required");
+                }
                 var data = await _context.AddNewData(member);
 
                 _logger.LogInformation($" {data.Name} has beed Successfully Added");
                 return new ServiceResponse(true, "Member has beed Added Successfully");
-               
+    
             } catch (Exception ex) {
                 _logger.LogError(ex, $"An error occurred while adding the member: {member}");
                 return new ServiceResponse(false,ex.Message);

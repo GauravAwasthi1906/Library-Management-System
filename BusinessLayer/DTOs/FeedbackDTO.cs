@@ -1,10 +1,14 @@
-﻿namespace BusinessLayer.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BusinessLayer.DTOs
 {
     public class FeedbackDTO
     {
-        public int Id { get; set; }
+        [Required]
         public int MemberId { get; set; }
+        [Required]
         public string Comment { get; set; }
+        [Required]
         public DateTime DateSubmitted { get; set; }
     }
 }

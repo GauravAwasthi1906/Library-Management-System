@@ -24,6 +24,10 @@ namespace WebAPI.Controller
             try
             {
                 var data = await _context.GetAllFeedBacks();
+                if (!data.Any())
+                {
+                    return NotFound("Data not found ");
+                }
                 return Ok(data);
             }
             catch (Exception ex) {
@@ -40,6 +44,10 @@ namespace WebAPI.Controller
                     return BadRequest("Please Enter the Valid Id");
                 }
                 var data = await _context.GetFeedBack(id);
+                if (data==null)
+                {
+                    return NotFound(new {message=$"The data is not found with Id {id}"});
+                }
                 return Ok(data);
             } catch (Exception ex) {
                 return StatusCode(500, ex.Message);
@@ -79,6 +87,10 @@ namespace WebAPI.Controller
                     return BadRequest("Please Enter the Valid Id");
                 }
                 var data =await _context.DeleteFeedBack(id);
+                if (!data.Flag)
+                {
+                    return NotFound(new {message=$"{data.Message}"});                    
+                }
                 return Ok(data);
             } catch (Exception ex) {
                 return StatusCode(500,ex.Message);
@@ -89,6 +101,10 @@ namespace WebAPI.Controller
         public async Task<ActionResult> UpdateFeedBack([FromRoute] int? id, [FromBody] FeedbackDTO feedback)
         {
             try {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
                 if (!id.HasValue || id <= 0)
                 {
                     return BadRequest("Please Enter the Valid Id");

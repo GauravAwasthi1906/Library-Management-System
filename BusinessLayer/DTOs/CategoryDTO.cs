@@ -2,13 +2,11 @@
 
 namespace BusinessLayer.DTOs
 {
-    public class MemberDTO
+    public class CategoryDTO
     {
         [Required]
         public string Name { get; set; }
         [Required]
-        public string ContactInfo { get; set; }
-        [Required]
-        public DateTime MembershipDate { get; set; }
+        public string Description { get; set; }
     }
 }

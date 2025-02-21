@@ -29,6 +29,7 @@ namespace DataAccessLayer.Repository.Repository
         public async Task<BookData> GetById(int id)
         {
             var data = from i in _context.book
+                       where i.Id == id
                        select new BookData
                        {
                            Id = i.Id,

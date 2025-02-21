@@ -5,6 +5,8 @@ using DataAccessLayer.GenericRepository.Repository;
 using DataAccessLayer.Repository.Interface;
 using DataAccessLayer.Repository.Repository;
 
+using FluentValidation;
+using FluentValidation.AspNetCore;
 namespace BusinessLayer.Mapping
 {
     public static class Mapping
@@ -22,6 +24,10 @@ namespace BusinessLayer.Mapping
             services.AddScoped<IBorrowService,BorrowService>();
             services.AddScoped<IBookRepository,BookRepository>();
             services.AddScoped<IBookService,BookService>();
+            services.AddScoped<IAuthorService,AuthorService>();
+            services.AddScoped<IAuthorRepository,AuthorRepository>();
+            services.AddScoped<ICategoryService,CategoryService>();
+
             services.AddLogging();
         }
     }
