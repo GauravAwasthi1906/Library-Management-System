@@ -9,8 +9,7 @@ namespace DataAccessLayer.Repository.Repository
     public class FeedBackRepository : IFeedBackRepository
     {
         private readonly AppDbContext _appDbContext;
-
-
+        
         public FeedBackRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;

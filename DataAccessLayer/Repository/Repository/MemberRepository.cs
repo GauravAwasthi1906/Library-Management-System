@@ -12,32 +12,71 @@ namespace DataAccessLayer.Repository.Repository
         {
             _context = context;
         }
-        public async Task<List<MemberData>> GetAllMembers()
+
+        public async Task<int> AddNewMember(string name, string contactinfo)
         {
-            var data = from i in _context.member
-                       select new MemberData
-                       {
-                           Id= i.Id,
-                           Name= i.Name,
-                           ContactInfo= i.ContactInfo,
-                           MembershipDate= i.MembershipDate,
-                       };
-            return await data.ToListAsync();
+            try {
+                return await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC AddnewMember @p0,@p1",
+                    name, contactinfo);
+            } catch (Exception ex) {
+                throw new Exception($"Error while inserting member data: {ex.Message}", ex);
+            }
         }
 
-        public async Task<MemberData> GetMemberById(int? id)
+        public async Task<int> DeleteMember(int id)
         {
-            var data = from i in _context.member
-                       where i.Id == id
-                       select new MemberData
-                       {
-                           Id = i.Id,
-                           Name = i.Name,
-                           ContactInfo = i.ContactInfo,
-                           MembershipDate = i.MembershipDate,
-                       };
-            var member=  await data.FirstOrDefaultAsync();
+            try
+            {
+                return await _context.Database.ExecuteSqlRawAsync
+                    ($"EXEC DeleteMemberData @p0", id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<MemberData>> GetAllMembers()
+        {
+            var memberEntity = await _context.member
+                .FromSqlRaw("EXEC GetAllMembers;")
+                .AsNoTracking()
+                .ToListAsync();
+            var member = memberEntity.Select(a=> new  MemberData
+            {
+                Id = a.Id,
+                Name = a.Name,
+                ContactInfo = a.ContactInfo,
+                MembershipDate=a.MembershipDate,
+            }).ToList();
             return member;
+        }
+
+        public async Task<MemberData?> GetMemberById(int? id)
+        {
+            try
+            {
+                var memberEntity =_context.member
+                .FromSqlRaw("EXEC GetMemberById @p0", id)
+                .AsEnumerable()
+                .FirstOrDefault();
+                return memberEntity == null ? null : new MemberData
+                {
+                Id = memberEntity.Id,
+                Name = memberEntity.Name,
+                ContactInfo = memberEntity.ContactInfo,
+                MembershipDate = memberEntity.MembershipDate,
+                };
+            }
+            catch (Exception ex) { 
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public Task<int> UpdateMember(int id, string name, string contactinfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

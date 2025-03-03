@@ -10,7 +10,7 @@ namespace WebAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class MemberController : ControllerBase
     {
         private readonly IMemberService _context;
@@ -71,7 +71,6 @@ namespace WebAPI.Controller
                 {
                     Name = memberDTO.Name,
                     ContactInfo= memberDTO.ContactInfo,
-                    MembershipDate=memberDTO.MembershipDate
 
                 };
                 var data = await _context.AddMember(entity);
@@ -96,7 +95,6 @@ namespace WebAPI.Controller
                 {
                     Name = memberDTO.Name,
                     ContactInfo = memberDTO.ContactInfo,
-                    MembershipDate = memberDTO.MembershipDate
                 };
                 var data = await _context.UpdateMember(id,entity);
                 return Ok(data);

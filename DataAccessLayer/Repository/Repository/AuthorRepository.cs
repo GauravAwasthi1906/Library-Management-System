@@ -63,12 +63,12 @@ namespace DataAccessLayer.Repository.Repository
             }
         }
 
-        public async Task<AuthorData> GetById(int? id)
+        public async Task<AuthorData?> GetById(int? id)
         {
             try
             {
                 var authorEntities = _context.author
-                .FromSqlRaw("EXEC GETAUTHORDATABYID {0}", id)
+                .FromSqlRaw("EXEC GETAUTHORDATABYID @p0", id)
                 .AsEnumerable() 
                 .FirstOrDefault();
                 return authorEntities == null ? null : new AuthorData

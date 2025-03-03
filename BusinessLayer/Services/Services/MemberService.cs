@@ -21,20 +21,22 @@ namespace BusinessLayer.Services.Services
         public async Task<ServiceResponse> AddMember(Member member)
         {
             try {
-                if (member == null || string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.ContactInfo) || member.MembershipDate == DateTime.MinValue || member.MembershipDate == null)
+                if (member == null || string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.ContactInfo))
                 {
                     return new ServiceResponse(false, "All fields are required");
                 }
-                var data = await _context.AddNewData(member);
-
-                _logger.LogInformation($" {data.Name} has beed Successfully Added");
-                return new ServiceResponse(true, "Member has beed Added Successfully");
-    
+                var data = await _memberRepository.AddNewMember(member.Name,member.ContactInfo);
+                if (data == 1)
+                {
+                    _logger.LogInformation($" {data} has beed Successfully Added");
+                    return new ServiceResponse(true, "Member has beed Added Successfully");
+                }
+                _logger.LogInformation($" {data} can not be Added");
+                return new ServiceResponse(false, "Member can not be Added Successfully");
             } catch (Exception ex) {
                 _logger.LogError(ex, $"An error occurred while adding the member: {member}");
                 return new ServiceResponse(false,ex.Message);
             }
-
         }
 
         public async Task<ServiceResponse> DeleteMember(int? id)
@@ -46,9 +48,9 @@ namespace BusinessLayer.Services.Services
                     _logger.LogWarning("Invalid ID provided.");
                     throw new ArgumentException("ID must be greater than 0.");
                 }
-                var data = await _context.GetDataById(id);
-                if (data != null) { 
-                    await _context.DeleteData(data);
+                var data = await _memberRepository.GetMemberById(id ?? 0);
+                if (data !=null) {
+                    await _memberRepository.DeleteMember(id?? 0);
                     _logger.LogInformation($"Delete member {id}");
                     return new ServiceResponse(true, "Member Deleted Successfully");
                 }

@@ -8,7 +8,6 @@ namespace BusinessLayer.DTOs
         public string Name { get; set; }
         [Required]
         public string ContactInfo { get; set; }
-        [Required]
-        public DateTime MembershipDate { get; set; }
+       
     }
 }
