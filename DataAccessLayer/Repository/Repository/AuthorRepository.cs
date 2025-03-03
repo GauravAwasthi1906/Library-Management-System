@@ -21,7 +21,7 @@ namespace DataAccessLayer.Repository.Repository
             try
             {
                 return await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC AddAuthorData @p0, @p1",
+                    "EXEC AddNewAuthor @p0, @p1",
                     author.Name, author.Biography);
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace DataAccessLayer.Repository.Repository
         {
             try {
                 return await _context.Database.ExecuteSqlRawAsync
-                    ($"EXEC DeleteAuthorData @p0", id);
+                    ($"EXEC DeleteAuthor @p0", id);
             } catch (Exception ex) {
                 throw new Exception(ex.Message);
             }
@@ -45,7 +45,7 @@ namespace DataAccessLayer.Repository.Repository
             try
             {
                 var authorEntities = await _context.author
-                .FromSqlRaw("EXEC GetAuthorData")
+                .FromSqlRaw("EXEC GetAllAuthors")
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -68,7 +68,7 @@ namespace DataAccessLayer.Repository.Repository
             try
             {
                 var authorEntities = _context.author
-                .FromSqlRaw("EXEC GETAUTHORDATABYID @p0", id)
+                .FromSqlRaw("EXEC GetAuthorById @p0", id)
                 .AsEnumerable() 
                 .FirstOrDefault();
                 return authorEntities == null ? null : new AuthorData
@@ -88,7 +88,7 @@ namespace DataAccessLayer.Repository.Repository
             try
             {
                 return await _context.Database.ExecuteSqlRawAsync(
-                   "EXEC UpdateAuthorData @p0, @p1 , @p2",id
+                   "EXEC UpdateAuthor @p0, @p1 , @p2", id
                    ,name, biography);
             }
             catch( Exception ex) 

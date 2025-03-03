@@ -105,15 +105,17 @@ namespace BusinessLayer.Services.Services
                 throw new ArgumentException("ID must be greater than 0.");
             }
             try {
-                var data = await _context.GetDataById(id);
+                var data = await _memberRepository.GetMemberById(id ?? 0);
                 if (data != null)
                 {
-                    data.Name = member.Name;
-                    data.ContactInfo = member.ContactInfo;
-                    data.MembershipDate = member.MembershipDate;
-                    await _context.UpdateDate(data);
-                    _logger.LogInformation($" {member.Name} has beed Successfully Updated");
-                    return new ServiceResponse(true, "Member has been successfully Updated");
+                    var updateMember = await _memberRepository.UpdateMember(data.Id,member.Name,member.ContactInfo);
+                    if (updateMember == 1)
+                    {    
+                        _logger.LogInformation($" {member.Name} has beed Successfully Updated");
+                        return new ServiceResponse(true, "Member has been successfully Updated");
+                    }
+                    _logger.LogInformation($" {member.Name} has can not be Updated");
+                    return new ServiceResponse(false, "Member can not be Updated");
                 }
                 else
                 {

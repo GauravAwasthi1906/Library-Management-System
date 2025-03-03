@@ -30,7 +30,6 @@ namespace DataAccessLayer.Repository.Repository
                            DateSubmitted = i.DateSubmitted,
                            Comment = i.Comment,
                        };
-
             return await data.ToListAsync();
         }
 

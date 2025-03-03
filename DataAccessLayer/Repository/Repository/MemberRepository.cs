@@ -29,7 +29,7 @@ namespace DataAccessLayer.Repository.Repository
             try
             {
                 return await _context.Database.ExecuteSqlRawAsync
-                    ($"EXEC DeleteMemberData @p0", id);
+                    ($"EXEC DeleteMember @p0", id);
             }
             catch (Exception ex)
             {
@@ -74,9 +74,18 @@ namespace DataAccessLayer.Repository.Repository
             }
         }
 
-        public Task<int> UpdateMember(int id, string name, string contactinfo)
+        public async  Task<int> UpdateMember(int id, string name, string contactinfo)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Database.ExecuteSqlRawAsync(
+                   "EXEC UpdateMember @p0, @p1 , @p2", id
+                   ,name, contactinfo);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
