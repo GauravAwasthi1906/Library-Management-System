@@ -44,17 +44,10 @@ namespace DataAccessLayer.Repository.Repository
         {
             try
             {
-                var authorEntities = await _context.author
-                .FromSqlRaw("EXEC GetAllAuthors")
-                .AsNoTracking()
+                var authors = await _context.Database
+                .SqlQueryRaw<AuthorData>("EXEC GetAllAuthors")
                 .ToListAsync();
 
-                var authors = authorEntities.Select(a => new AuthorData
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Biography = a.Biography,
-                }).ToList();
                 return authors;
             }
             catch(Exception ex)
@@ -67,16 +60,11 @@ namespace DataAccessLayer.Repository.Repository
         {
             try
             {
-                var authorEntities = _context.author
-                .FromSqlRaw("EXEC GetAuthorById @p0", id)
-                .AsEnumerable() 
-                .FirstOrDefault();
-                return authorEntities == null ? null : new AuthorData
-                {
-                    Id = authorEntities.Id,
-                    Name = authorEntities.Name,
-                    Biography = authorEntities.Biography,
-                };
+                var authorEntities = await _context.Database
+                .SqlQueryRaw<AuthorData>("EXEC GetAuthorById @p0", id)
+                .ToListAsync();
+
+                return authorEntities.FirstOrDefault();
             }
             catch (Exception ex) { 
                 throw new Exception(ex.Message);

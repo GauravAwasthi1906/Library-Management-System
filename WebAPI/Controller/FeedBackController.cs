@@ -8,7 +8,7 @@ namespace WebAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FeedBackController : ControllerBase
     {
         private readonly IFeedBackService _context;

@@ -17,39 +17,21 @@ namespace DataAccessLayer.Repository.Repository
 
          public async Task<List<FeedbackData>> GetAllData()
             {
-            var data = from i in _appDbContext.feedback
-                       join j in _appDbContext.member
-                       on i.MemberId equals j.Id
-                       select new FeedbackData
-                       {
-                           Id = i.Id,
-                           MemberId = i.MemberId,
-                           MemberName = j.Name,
-                           MemberContactInfo = j.ContactInfo,
-                           MembershipDate = j.MembershipDate,
-                           DateSubmitted = i.DateSubmitted,
-                           Comment = i.Comment,
-                       };
-            return await data.ToListAsync();
+                var feedback = await _appDbContext.Database
+                .SqlQueryRaw<FeedbackData>("EXEC GetAllFeedback")
+                .ToListAsync();
+
+                return feedback;
+            }
+
+        public async Task<FeedbackData?> GetData(int? id)
+        {
+            var feedbackList = await _appDbContext.Database
+                .SqlQueryRaw<FeedbackData>("EXEC GetFeedbackById @p0", id)
+                .ToListAsync();
+
+            return feedbackList.FirstOrDefault();
         }
 
-        public async Task<FeedbackData> GetData(int? id)
-        {
-            var data = from i in _appDbContext.feedback 
-                       join j in _appDbContext.member
-                       on i.MemberId equals j.Id
-                       where i.Id == id 
-                        select new FeedbackData
-                        {
-                            Id = i.Id,
-                            MemberId= i.MemberId,
-                            MemberName= j.Name,
-                            MemberContactInfo=j.ContactInfo,
-                            MembershipDate=j.MembershipDate,
-                            DateSubmitted=i.DateSubmitted,
-                            Comment=i.Comment,
-                        };
-            return await data.FirstAsync();
-        }
     }
 }

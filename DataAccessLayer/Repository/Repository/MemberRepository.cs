@@ -39,17 +39,11 @@ namespace DataAccessLayer.Repository.Repository
 
         public async Task<List<MemberData>> GetAllMembers()
         {
-            var memberEntity = await _context.member
-                .FromSqlRaw("EXEC GetAllMembers;")
-                .AsNoTracking()
+
+            var member = await _context.Database
+                .SqlQueryRaw<MemberData>("EXEC GetAllMembers")
                 .ToListAsync();
-            var member = memberEntity.Select(a=> new  MemberData
-            {
-                Id = a.Id,
-                Name = a.Name,
-                ContactInfo = a.ContactInfo,
-                MembershipDate=a.MembershipDate,
-            }).ToList();
+
             return member;
         }
 
@@ -57,17 +51,10 @@ namespace DataAccessLayer.Repository.Repository
         {
             try
             {
-                var memberEntity =_context.member
-                .FromSqlRaw("EXEC GetMemberById @p0", id)
-                .AsEnumerable()
-                .FirstOrDefault();
-                return memberEntity == null ? null : new MemberData
-                {
-                Id = memberEntity.Id,
-                Name = memberEntity.Name,
-                ContactInfo = memberEntity.ContactInfo,
-                MembershipDate = memberEntity.MembershipDate,
-                };
+                var memberEntity = await _context.Database
+                .SqlQueryRaw<MemberData>("EXEC GetMemberById @p0", id)
+                .ToListAsync();
+                return memberEntity.FirstOrDefault();
             }
             catch (Exception ex) { 
                 throw new Exception(ex.Message);
