@@ -10,15 +10,13 @@ namespace BusinessLayer.Services.Services
     public class MemberService : IMemberService
     {
         private readonly ILogger<MemberService> _logger;
-        private readonly IGenericRepository<Member> _context;
         private readonly IMemberRepository _memberRepository;
-        public MemberService(ILogger<MemberService> logger, IGenericRepository<Member> context, IMemberRepository memberRepository)
+        public MemberService(ILogger<MemberService> logger, IMemberRepository memberRepository)
         {
             _logger = logger;
-            _context = context;
             _memberRepository = memberRepository;
         }
-        public async Task<ServiceResponse> AddMember(Member member)
+        public async Task<ServiceResponse> AddMember(MemberDTO member)
         {
             try {
                 if (member == null || string.IsNullOrWhiteSpace(member.Name) || string.IsNullOrWhiteSpace(member.ContactInfo))
@@ -70,7 +68,7 @@ namespace BusinessLayer.Services.Services
             
             try { 
                 var data = await _memberRepository.GetAllMembers();
-                if (data == null || !data.Any())
+                if (!data.Any())
                 {
                     throw new Exception("Data Not Found");
                 }
@@ -97,7 +95,7 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<ServiceResponse> UpdateMember(int? id,Member member)
+        public async Task<ServiceResponse> UpdateMember(int? id, MemberDTO member)
         {
             if (!id.HasValue || id <= 0)
             {

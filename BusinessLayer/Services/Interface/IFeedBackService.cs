@@ -6,8 +6,8 @@ namespace BusinessLayer.Services.Interface
 {
     public interface IFeedBackService
     {
-        Task<ServiceResponse> AddFeedBack(Feedback feedback);
-        Task<ServiceResponse> UpdateFeedBack(int? id ,Feedback feedback);
+        Task<ServiceResponse> AddFeedBack(FeedbackDTO feedback);
+        Task<ServiceResponse> UpdateFeedBack(int? id , FeedbackDTO feedback);
         Task<ServiceResponse> DeleteFeedBack(int? id);
         Task<List<FeedbackData>> GetAllFeedBacks();
         Task<FeedbackData> GetFeedBack(int? id);

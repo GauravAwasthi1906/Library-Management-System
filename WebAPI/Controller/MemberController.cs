@@ -59,7 +59,7 @@ namespace WebAPI.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddNewMember([FromBody] MemberDTO memberDTO)
+        public async Task<ActionResult> AddNewMember([FromBody] MemberDTO member)
         {
             try
             {
@@ -67,13 +67,7 @@ namespace WebAPI.Controller
                 {
                     return BadRequest(ModelState);
                 }
-                var entity = new Member
-                {
-                    Name = memberDTO.Name,
-                    ContactInfo= memberDTO.ContactInfo,
-
-                };
-                var data = await _context.AddMember(entity);
+                var data = await _context.AddMember(member);
                 return Ok(data);
             }
             catch (Exception ex)
@@ -83,7 +77,7 @@ namespace WebAPI.Controller
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateMember([FromRoute]int id, [FromBody] MemberDTO memberDTO)
+        public async Task<ActionResult> UpdateMember([FromRoute]int id, [FromBody] MemberDTO member)
         {
             try
             {
@@ -91,12 +85,7 @@ namespace WebAPI.Controller
                 {
                     return BadRequest(ModelState);
                 }
-                var entity = new Member
-                {
-                    Name = memberDTO.Name,
-                    ContactInfo = memberDTO.ContactInfo,
-                };
-                var data = await _context.UpdateMember(id,entity);
+                var data = await _context.UpdateMember(id,member);
                 return Ok(data);
             }
             catch (Exception ex)

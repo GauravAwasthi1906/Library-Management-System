@@ -13,13 +13,15 @@ using Microsoft.IdentityModel.Tokens;
 namespace BusinessLayer.Services.Services
 {
     public class AuthService : IAuthService
-    {
+    {   
+        private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
         private readonly IGenericRepository<Employee> _generic;
         private readonly IAuthRepository _auth;
         private readonly PasswordHasher<object> _passwordHasher;
-        public AuthService(ILogger<AuthService> logger, IGenericRepository<Employee> employee, IAuthRepository auth)
+        public AuthService(IConfiguration configuration, ILogger<AuthService> logger, IGenericRepository<Employee> employee, IAuthRepository auth)
         {
+            _configuration=configuration;
             _generic = employee;
             _logger = logger;
             _auth = auth;
@@ -42,23 +44,27 @@ namespace BusinessLayer.Services.Services
                     _logger.LogWarning("Incorrect Password");
                     return new ServiceResponse(false, "Incorrect Password");
                 }
+
                 _logger.LogInformation("Login process completed successfully");
 
-                
+                // Read Secret Key from appsettings.json
+                var secretKey = _configuration["JwtSettings:SecretKey"];
+                var key = Encoding.UTF8.GetBytes(secretKey);
+
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, data.Id.ToString()),
-            new Claim(ClaimTypes.Email, data.Email),
-            new Claim("FullName", data.Full_Name),
-            new Claim("Date", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))
-        };
+            {
+                new Claim(ClaimTypes.NameIdentifier, data.Id.ToString()),
+                new Claim(ClaimTypes.Email, data.Email),
+                new Claim("FullName", data.Full_Name),
+                new Claim("Date", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))
+            };
+
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("ThisistheSecuritykeyYourSuperSecretKey12345");
                 var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
 
                 var token = new JwtSecurityToken(
-                    issuer: "YourIssuer",
-                    audience: "YourAudience",
+                    issuer: _configuration["JwtSettings:Issuer"],
+                    audience: _configuration["JwtSettings:Audience"],
                     claims: claims,
                     expires: DateTime.UtcNow.AddHours(1),
                     signingCredentials: signingCredentials
@@ -66,7 +72,6 @@ namespace BusinessLayer.Services.Services
 
                 var jwtToken = tokenHandler.WriteToken(token);
 
-                //var encryptedToken = TokenUtility.EncryptToken(jwtToken);
                 return new ServiceResponse(true, jwtToken);
             }
             catch (Exception ex)
@@ -75,6 +80,7 @@ namespace BusinessLayer.Services.Services
                 return new ServiceResponse(false, ex.Message);
             }
         }
+
 
         public async Task<ServiceResponse> SignUp(Employee employee)
         {

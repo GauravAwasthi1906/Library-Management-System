@@ -16,13 +16,13 @@ namespace DataAccessLayer.Repository.Repository
             _context = context;
         }
 
-        public async Task<int> AddnewData(Author author)
+        public async Task<int> AddnewData(string name, string biography)
         {
             try
             {
                 return await _context.Database.ExecuteSqlRawAsync(
                     "EXEC AddNewAuthor @p0, @p1",
-                    author.Name, author.Biography);
+                    name,biography);
             }
             catch (Exception ex)
             {

@@ -63,13 +63,7 @@ namespace WebAPI.Controller
                 {
                     return BadRequest(ModelState);
                 }
-                var entity = new Feedback
-                {
-                    MemberId = feedback.MemberId,
-                    Comment = feedback.Comment,
-                    DateSubmitted = feedback.DateSubmitted,
-                };
-                var data = await _context.AddFeedBack(entity);
+                var data = await _context.AddFeedBack(feedback);
                 return Ok(data);
             }
             catch (Exception ex)
@@ -109,13 +103,7 @@ namespace WebAPI.Controller
                 {
                     return BadRequest("Please Enter the Valid Id");
                 }
-                var entity = new Feedback
-                {
-                    MemberId = feedback.MemberId,
-                    Comment = feedback.Comment,
-                    DateSubmitted = feedback.DateSubmitted,
-                };
-                var data = await _context.UpdateFeedBack(id, entity);
+                var data = await _context.UpdateFeedBack(id, feedback);
                 return Ok(data);
             } catch (Exception ex) {
                 return StatusCode(500, ex.Message);            

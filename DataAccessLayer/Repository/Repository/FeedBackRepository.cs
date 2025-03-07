@@ -15,7 +15,30 @@ namespace DataAccessLayer.Repository.Repository
             _appDbContext = appDbContext;
         }
 
-         public async Task<List<FeedbackData>> GetAllData()
+        public async Task<int> AddData(int memberId, string comment)
+        {
+            try {
+                return await _appDbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC AddNewFeedBack @p0, @p1",
+                    memberId, comment);
+            }
+            catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<int> DeleteData(int? id)
+        {
+            try {
+                return await _appDbContext.Database.ExecuteSqlRawAsync
+                    ($"EXEC DeleteFeedBack @p0", id);
+            }
+            catch(Exception ex) {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<FeedbackData>> GetAllData()
             {
                 var feedback = await _appDbContext.Database
                 .SqlQueryRaw<FeedbackData>("EXEC GetAllFeedback")
@@ -33,5 +56,18 @@ namespace DataAccessLayer.Repository.Repository
             return feedbackList.FirstOrDefault();
         }
 
+        public async Task<int> UpdateData(int? id,int memberId, string comment)
+        {
+            try
+            {
+                return await _appDbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC UpdateFeedback @p0, @p1, @p2",
+                    id?? 0,memberId, comment);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

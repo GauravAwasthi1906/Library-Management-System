@@ -6,8 +6,8 @@ namespace BusinessLayer.Services.Interface
 {
     public interface IMemberService
     {
-        Task<ServiceResponse> AddMember(Member member);
-        Task<ServiceResponse> UpdateMember(int? id ,Member member);
+        Task<ServiceResponse> AddMember(MemberDTO member);
+        Task<ServiceResponse> UpdateMember(int? id , MemberDTO member);
         Task<ServiceResponse> DeleteMember(int? id);
         Task<MemberData> GetMemberById(int? id);
         Task<List<MemberData>> GetAllMembers();

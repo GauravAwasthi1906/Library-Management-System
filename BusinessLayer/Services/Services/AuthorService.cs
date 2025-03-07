@@ -18,12 +18,12 @@ namespace BusinessLayer.Services.Services
             _logger = logger;
             _authorRepository = authorRepository;
         }
-        public async Task<ServiceResponse> AddAuthorData(Author author)
+        public async Task<ServiceResponse> AddAuthorData(AuthorDTO author)
         {
             try {
 
                 _logger.LogInformation(author.Name,author.Biography);
-                var data = await _authorRepository.AddnewData(author);
+                var data = await _authorRepository.AddnewData(author.Name,author.Biography);
                 if (data == 0)
                 {
                     _logger.LogWarning("The Data can not be Added");
@@ -92,14 +92,14 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<ServiceResponse> UpdateAuthorData(int? id, Author author)
+        public async Task<ServiceResponse> UpdateAuthorData(int? id, AuthorDTO author)
         {
             try {
                 var data = await _authorRepository.GetById(id);
                 if (data == null)
                 {
                     _logger.LogInformation($"data not found with this Id {id}");
-                    return new ServiceResponse(false,"Data not found");                    
+                    return new ServiceResponse(false,"Data not found");                  
                 }
                 await _authorRepository.UpdateData(id?? 0,author.Name,author.Biography);
                 return new ServiceResponse(true, "Author data updated Successfully");

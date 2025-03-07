@@ -18,12 +18,17 @@ namespace BusinessLayer.Services.Services
             _logger = logger;
             _repository = repository;
         }
-        public async Task<ServiceResponse> AddFeedBack(Feedback feedback)
+        public async Task<ServiceResponse> AddFeedBack(FeedbackDTO feedback)
         {
             try {
-                var data = await _context.AddNewData(feedback);
-                _logger.LogInformation("Your feedback has beed submitted");
-                return new ServiceResponse(true, "Feedback has beed added Successfully");
+                var data = await _repository.AddData(feedback.MemberId,feedback.Comment);
+                if (data== 1)
+                {
+                    _logger.LogInformation("Your feedback has beed submitted");
+                    return new ServiceResponse(true, "Feedback has beed added Successfully");
+                }
+                _logger.LogInformation("Your feedback can not be submitted");
+                return new ServiceResponse(false, "Feedback can not be added Successfully");
             } catch (Exception ex) {
                 _logger.LogError("Something went Wrong");
                 return new ServiceResponse(false, ex.Message);
@@ -57,7 +62,7 @@ namespace BusinessLayer.Services.Services
         {
             try {
                 var data = await _repository.GetAllData();
-                if (data == null || !data.Any())
+                if (!data.Any())
                 {
                     throw new Exception("Data of Feedback is not found");
                 }
@@ -82,24 +87,26 @@ namespace BusinessLayer.Services.Services
             }
         }
 
-        public async Task<ServiceResponse> UpdateFeedBack(int? id ,Feedback feedback)
+        public async Task<ServiceResponse> UpdateFeedBack(int? id , FeedbackDTO feedback)
         {
-            
             try {
-                var data =await _context.GetDataById(id);
+                var data= await _repository.GetData(id?? 0);
                 if (data == null)
                 {
                     _logger.LogInformation("Feedback data is not found with this Id ");
                     return new ServiceResponse(false, "Feedback not found");
                 }
-
-                data.MemberId = feedback.MemberId;
-                data.Comment = feedback.Comment;
-                data.DateSubmitted= feedback.DateSubmitted;
-                await _context.UpdateDate(data);
-                _logger.LogInformation("Feedback updated Successfully");
-                return new ServiceResponse(true, "Feedback updated Successfully");
-
+                var update = await _repository.UpdateData(id, feedback.MemberId,feedback.Comment);
+                if (update== 1)
+                {
+                    _logger.LogInformation("Feedback updated Successfully");
+                    return new ServiceResponse(true, "Feedback updated Successfully");
+                }
+                else
+                {
+                    _logger.LogInformation("Feedback can not update Successfully");
+                    return new ServiceResponse(true, "Feedback can not update Successfully");
+                }
             } 
             catch (Exception ex) {
                 throw new Exception(ex.Message);

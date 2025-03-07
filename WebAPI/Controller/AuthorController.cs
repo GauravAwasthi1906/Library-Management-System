@@ -8,7 +8,7 @@ namespace WebAPI.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _authorService;
@@ -87,12 +87,7 @@ namespace WebAPI.Controller
                 {
                     return BadRequest(ModelState);
                 }
-                var entity = new Author 
-                {
-                    Name = author.Name,
-                    Biography=author.Biography,
-                };
-                var data = await _authorService.AddAuthorData(entity);
+                var data = await _authorService.AddAuthorData(author);
                 if (!data.Flag)
                 {
                     return BadRequest(new { message = $"{data.Message}" });
@@ -113,12 +108,7 @@ namespace WebAPI.Controller
                 {
                     return BadRequest(ModelState);
                 }
-                var entity = new Author
-                {
-                    Name = author.Name,
-                    Biography = author.Biography,
-                };
-                var data = await _authorService.UpdateAuthorData(id,entity);
+                var data = await _authorService.UpdateAuthorData(id,author);
                 if (!data.Flag)
                 {
                     return BadRequest(new {message = "Something went wrong"});
